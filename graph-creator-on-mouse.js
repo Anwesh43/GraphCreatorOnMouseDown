@@ -4,6 +4,7 @@ class Vertex {
         this.neighbors = []
         this.x = x
         this.y = y
+        this.state = new State()
     }
     draw(context) {
         const initColor = '#f44336'
@@ -11,7 +12,7 @@ class Vertex {
         context.save()
         context.translate(this.x,this.y)
         this.drawVertexAndEdges(context,1,initColor)
-        this.drawVertexAndEdges(context,0,selectColor)
+        this.drawVertexAndEdges(context,this.state.scale,selectColor)
         context.restore()
     }
     drawVertexAndEdges(context,scale,color) {
@@ -28,13 +29,16 @@ class Vertex {
         })
     }
     update() {
-
+        this.state.update()
     }
     startUpdating() {
-
+        this.state.startUpdating()
     }
     stopped() {
-
+        return this.state.stopped()
+    }
+    addNeighbor(vertex) {
+        this.neighbors.push(vertex)
     }
 }
 class State {
