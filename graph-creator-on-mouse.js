@@ -24,7 +24,7 @@ class Vertex {
         this.neighbors.forEach((neighbor)=>{
             context.beginPath()
             context.moveTo(0,0)
-            context.lineTo((neighbor.x-this.x),(neighbor.y-this.y))
+            context.lineTo((neighbor.x-this.x)*scale,(neighbor.y-this.y)*scale)
             context.stroke()
         })
     }
@@ -76,7 +76,7 @@ class Graph {
     drawVertex(context,root) {
         root.draw(context)
         root.neighbors.forEach((vertex)=>{
-            vertex.draw(context)
+            this.drawVertex(context,vertex)
         })
     }
     draw(context) {
@@ -86,13 +86,19 @@ class Graph {
     }
     handleTapForVertex(x,y,root) {
         if(root.handleTap(x,y)) {
+            if(this.curr) {
+                this.curr.state.scale = 0
+            }
             this.curr = root
             this.curr.state.scale = 1
             return true
         }
         else {
-            for(var i=0;i<this.neighbors.length;i++) {
-                return this.handleTapForVertex(x,y,this.neighbors[i])
+            for(var i=0;i<root.neighbors.length;i++) {
+                const tapped =  this.handleTapForVertex(x,y,root.neighbors[i])
+                if(tapped) {
+                    return tapped
+                }
             }
         }
     }
@@ -119,17 +125,20 @@ class Stage {
         this.canvas.width = w
         this.canvas.height = h
         this.context = this.canvas.getContext('2d')
-        document.body.appendChild(this.content)
+        document.body.appendChild(this.canvas)
         this.graph = new Graph()
+        this.graph.draw(this.context)
     }
     initMouseEvent() {
-        this.canas.onmousedown = (event) => {
+        this.canvas.onmousedown = (event) => {
             const x = event.offsetX,y = event.offsetY
             if(!this.graph.handleTap(x,y)) {
                 this.graph.createVertex(x,y)
             }
+            this.graph.draw(this.context)
         }
+
     }
 }
-const stage = new Stage(600,600)
-state.initMouseEvent()
+const stage = new Stage(w,h)
+stage.initMouseEvent()
