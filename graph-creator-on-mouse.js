@@ -7,8 +7,11 @@ class Vertex {
     }
     draw(context) {
         const initColor = '#f44336'
+        const selectColor = '#009688'
         context.save()
         context.translate(this.x,this.y)
+        this.drawVertexAndEdges(context,1,initColor)
+        this.drawVertexAndEdges(context,0,selectColor)
         context.restore()
     }
     drawVertexAndEdges(context,scale,color) {
@@ -25,12 +28,35 @@ class Vertex {
         })
     }
     update() {
-      
+
     }
     startUpdating() {
 
     }
     stopped() {
 
+    }
+}
+class State {
+    constructor() {
+        this.scale = 0
+        this.dir = 0
+    }
+    update() {
+        this.scale += this.dir*0.1
+        if(this.scale > 1) {
+            this.scale = 0
+            this.dir = 0
+        }
+        if(this.scale < 0) {
+            this.scale = 0
+            this.dir = 0
+        }
+    }
+    stopped() {
+        return this.dir == 0
+    }
+    startUpdating() {
+        this.dir = 1-2*this.scale
     }
 }
