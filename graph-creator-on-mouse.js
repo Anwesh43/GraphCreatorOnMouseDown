@@ -113,3 +113,21 @@ class Graph {
         }
     }
 }
+class Stage {
+    constructor(w,h) {
+        this.canvas = document.createElement('canvas')
+        this.canvas.width = w
+        this.canvas.height = h
+        this.context = this.canvas.getContext('2d')
+        document.body.appendChild(this.content)
+        this.graph = new Graph()
+    }
+    initMouseEvent() {
+        this.canas.onmousedown = (event) => {
+            const x = event.offsetX,y = event.offsetY
+            if(!this.graph.handleTap(x,y)) {
+                this.graph.createVertex(x,y)
+            }
+        }
+    }
+}
