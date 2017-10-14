@@ -131,3 +131,5 @@ class Stage {
         }
     }
 }
+const stage = new Stage(600,600)
+state.initMouseEvent()
