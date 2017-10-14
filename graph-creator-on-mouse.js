@@ -40,6 +40,9 @@ class Vertex {
     addNeighbor(vertex) {
         this.neighbors.push(vertex)
     }
+    handleTap(x,y) {
+        return x>=this.x-size && x<=this.x+size && y>=this.y-size && y<=this.y+size
+    }
 }
 class State {
     constructor() {
@@ -62,5 +65,51 @@ class State {
     }
     startUpdating() {
         this.dir = 1-2*this.scale
+    }
+}
+//mode is 0 it is create mode if mode is selection
+class Graph {
+    constructor() {
+        this.mode = 0
+        this.root = null
+    }
+    drawVertex(context,root) {
+        root.draw(context)
+        root.neighbors.forEach((vertex)=>{
+            vertex.draw(context)
+        })
+    }
+    draw(context) {
+        if(this.root != null) {
+            this.drawVertex(context,this.root)
+        }
+    }
+    handleTapForVertex(x,y,root) {
+        if(root.handleTap(x,y)) {
+            this.curr = root
+            this.curr.state.scale = 1
+            return true
+        }
+        else {
+            for(var i=0;i<this.neighbors.length;i++) {
+                return this.handleTapForVertex(x,y,this.neighbors[i])
+            }
+        }
+    }
+    handleTap(x,y) {
+        if(this.root != null) {
+            return this.handleTapForVertex(x,y,this.root)
+        }
+        return false
+    }
+    createVertex(x,y) {
+        if(this.root == null) {
+            this.root = new Vertex(x,y)
+            this.curr = this.root
+            this.curr.state.scale = 1
+        }
+        else {
+            this.curr.neighbors.push(new Vertex(x,y))
+        }
     }
 }
