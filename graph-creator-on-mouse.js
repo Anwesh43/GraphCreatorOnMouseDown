@@ -52,7 +52,7 @@ class State {
     update() {
         this.scale += this.dir*0.1
         if(this.scale > 1) {
-            this.scale = 0
+            this.scale = 1
             this.dir = 0
         }
         if(this.scale < 0) {
@@ -80,6 +80,9 @@ class Graph {
         })
     }
     selectCurr() {
+       if(this.prev) {
+          this.prev.state.scale = 0
+        }
         this.curr.state.scale = 1
     }
     update(stopcb) {
@@ -107,9 +110,7 @@ class Graph {
     }
     handleTapForVertex(x,y,root) {
         if(root.handleTap(x,y)) {
-            if(this.curr) {
-                this.curr.state.scale = 0
-            }
+            this.prev = this.curr
             this.curr = root
             return true
         }
