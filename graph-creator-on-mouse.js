@@ -149,6 +149,10 @@ class Stage {
         this.graph = new Graph()
         this.graph.draw(this.context)
         this.mode = 0
+        this.loop = new Loop(()=>{
+            this.graph.draw(this.context)
+            this.graph.update(this.loop.stopAnimation)
+        })
     }
     initMouseEvent() {
         this.canvas.onmousedown = (event) => {
@@ -163,7 +167,7 @@ class Stage {
                     this.graph.selectCurr()
                 }
                 else {
-                    this.graph.startUpdatingCurrVertex()
+                    this.graph.startUpdatingCurrVertex(this.loop.startAnimation)
                 }
             }
             this.graph.draw(this.context)
