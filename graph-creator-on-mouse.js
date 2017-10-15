@@ -173,7 +173,14 @@ class Stage {
             }
             this.graph.draw(this.context)
         }
-
+    }
+    toggleMode() {
+        if(this.graph.root != null) {
+            this.mode = (this.mode+1)%2
+        }
+        else {
+            alert("Insert a node atleast!")
+        }
     }
 }
 class Loop {
@@ -196,5 +203,31 @@ class Loop {
         clearInterval(this.interval)
     }
 }
+class SelectionButton {
+    constructor(stage) {
+        this.button = document.createElement('button')
+        document.body.appendChild(this.button)
+        this.stage = stage
+        this.setText()
+    }
+    setText() {
+        if(this.stage.mode == 0) {
+            this.button.innerHTML = "switch to selection mode"
+        }
+        else {
+            this.button.innerHTML = "switch to insertion mode"
+        }
+    }
+    setOnClickListener(cb) {
+        this.button.onclick = () => {
+            cb()
+            this.setText()
+        }
+    }
+}
 const stage = new Stage(w,h)
 stage.initMouseEvent()
+const selectionButton = new SelectionButton(stage)
+selectionButton.setOnClickListener(()=>{
+    stage.toggleMode()
+})
