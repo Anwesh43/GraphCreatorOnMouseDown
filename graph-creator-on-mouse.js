@@ -70,14 +70,35 @@ class State {
 //mode is 0 it is create mode if mode is selection
 class Graph {
     constructor() {
-        this.mode = 0
         this.root = null
+        this.vertices = []
     }
     drawVertex(context,root) {
         root.draw(context)
         root.neighbors.forEach((vertex)=>{
             this.drawVertex(context,vertex)
         })
+    }
+    selectCurr() {
+        this.curr.state.scale = 1
+    }
+    update(stopcb) {
+        this.vertices.forEach((vertex,index)=>{
+            vertex.update()
+            if(vertex.stopped()) {
+                this.vertices.splice(index,1)
+                if(this.vertices.length == 0) {
+                    stopcb()
+                }
+            }
+        })
+    }
+    startUpdatingCurrVertex(startcb) {
+        this.vertices.push(this.curr)
+        this.curr.startUpdating()
+        if(this.vertices.length == 1) {
+            startcb()
+        }
     }
     draw(context) {
         if(this.root != null) {
@@ -90,7 +111,6 @@ class Graph {
                 this.curr.state.scale = 0
             }
             this.curr = root
-            this.curr.state.scale = 1
             return true
         }
         else {
@@ -128,12 +148,23 @@ class Stage {
         document.body.appendChild(this.canvas)
         this.graph = new Graph()
         this.graph.draw(this.context)
+        this.mode = 0
     }
     initMouseEvent() {
         this.canvas.onmousedown = (event) => {
             const x = event.offsetX,y = event.offsetY
             if(!this.graph.handleTap(x,y)) {
-                this.graph.createVertex(x,y)
+                if(this.mode == 0) {
+                    this.graph.createVertex(x,y)
+                }
+            }
+            else {
+                if(this.mode == 0) {
+                    this.graph.selectCurr()
+                }
+                else {
+                    this.graph.startUpdatingCurrVertex()
+                }
             }
             this.graph.draw(this.context)
         }
