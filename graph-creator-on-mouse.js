@@ -171,5 +171,25 @@ class Stage {
 
     }
 }
+class Loop {
+    constructor(updateCb) {
+        this.animated = false
+        this.updateCb = updateCb
+        this.startAnimation = this.startAnimation.bind(this)
+        this.stopAnimation =  this.stopAnimation.bind(this)
+    }
+    startAnimation() {
+        if(!this.animated) {
+            this.animated = true
+            this.interval = setInterval(()=>{
+                this.updateCb()
+            },60)
+        }
+    }
+    stopAnimation() {
+        this.animated = false
+        clearInterval(this.interval)
+    }
+}
 const stage = new Stage(w,h)
 stage.initMouseEvent()
